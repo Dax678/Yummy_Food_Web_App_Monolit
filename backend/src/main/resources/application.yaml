@@ -1,0 +1,45 @@
+spring.application.name: backend
+
+server.port: 8080
+
+logging:
+  level:
+    root: INFO
+    org.yummyfood.backend: DEBUG
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    operations-sorter: method
+    tags-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+api:
+  common:
+    title: "Yummy Food API"
+    description: "Yummy Food API - monolith"
+    version: "1.0"
+    contact:
+      name: "Yummy Food Team"
+      email: "support.example@example.com"
+    license:
+      name: "MIT"
+
+# === DATABASE ===
+spring.datasource:
+  url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/YummyFoodDB?currentSchema=yummyfood}
+  username: ${SPRING_DATASOURCE_USERNAME:postgres}
+  password: ${SPRING_DATASOURCE_PASSWORD:ZAQ!2wsx}
+
+# === JPA / HIBERNATE ===
+spring.jpa:
+  show-sql: true
+  hibernate:
+    ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+  properties.hibernate:
+    dialect: org.hibernate.dialect.PostgreSQLDialect
+    format_sql: true
+#    default_schema: yummyfood
+
+  defer-datasource-initialization: ${SPRING_JPA_DEFER_DATASOURCE_INITIALIZATION:false}
