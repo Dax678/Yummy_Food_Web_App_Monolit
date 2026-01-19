@@ -5,13 +5,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.yummyfood.backend.domain.Restaurant;
 import org.yummyfood.backend.dto.request.RestaurantRequest;
-import org.yummyfood.backend.dto.response.RestaurantResponse;
+import org.yummyfood.backend.dto.response.RestaurantDetailsResponse;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RestaurantMapper {
-    RestaurantResponse entityToApi(Restaurant entity);
+    RestaurantDetailsResponse entityToApi(Restaurant entity);
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
@@ -19,7 +19,7 @@ public interface RestaurantMapper {
     })
     Restaurant apiToEntity(RestaurantRequest api);
 
-    List<RestaurantResponse> entityListToApiList(List<Restaurant> entityList);
+    List<RestaurantDetailsResponse> entityListToApiList(List<Restaurant> entityList);
 
     List<RestaurantRequest>  apiListToEntityList(List<RestaurantRequest> apiList);
 }

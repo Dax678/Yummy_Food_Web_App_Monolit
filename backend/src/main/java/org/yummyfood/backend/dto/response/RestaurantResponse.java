@@ -1,7 +1,7 @@
 package org.yummyfood.backend.dto.response;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record RestaurantResponse(
@@ -10,7 +10,13 @@ public record RestaurantResponse(
         String description,
         String phone,
         String email,
-        boolean isActive,
-        BigDecimal avgRating,
-        OffsetDateTime createdAt
-) { }
+        List<MenuItemResponse> items
+) {
+    public record MenuItemResponse(
+            UUID id,
+            String name,
+            String description,
+            BigDecimal price,
+            String imageUrl
+    ) { }
+}

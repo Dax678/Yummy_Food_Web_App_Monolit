@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalControllerExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<HttpErrorInfo> handleNotFoundException(NotFoundException ex, HttpServletRequest request) {
+    @ExceptionHandler({
+            NotFoundException.class,
+            UserNotFoundException.class
+    })
+    public ResponseEntity<HttpErrorInfo> handleNotFoundException(Exception ex, HttpServletRequest request) {
         return buildHttpErrorInfo(HttpStatus.NOT_FOUND, request, ex);
     }
 

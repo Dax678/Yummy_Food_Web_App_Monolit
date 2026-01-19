@@ -1,12 +1,10 @@
 package org.yummyfood.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yummyfood.backend.domain.*;
 import org.yummyfood.backend.domain.model.OrderStatus;
-import org.yummyfood.backend.exception.InvalidInputException;
 import org.yummyfood.backend.exception.NotFoundException;
 import org.yummyfood.backend.repository.MenuItemRepository;
 import org.yummyfood.backend.repository.OrderRepository;
@@ -43,26 +41,39 @@ public class OrderServiceImpl implements OrderService {
                 () -> new NotFoundException("Restaurant not found with id: " + order.getRestaurant().getId())
         );
 
-        Order newOrder =Order.builder()
+        Order newOrder = Order.builder()
                 .user(user)
                 .restaurant(restaurant)
-                .status(order.getStatus())
+                .status(OrderStatus.NEW)
                 .itemsTotal(BigDecimal.ZERO)
-                .deliveryFee(BigDecimal.ZERO)
+                .deliveryFee(BigDecimal.ZERO) //TODO: Add price based on location
                 .grandTotal(BigDecimal.ZERO)
                 .notes(order.getNotes())
                 .build();
 
-        for(OrderItem orderItem : order.getItems()) {
+        BigDecimal itemsTotal = BigDecimal.ZERO;
+
+        for (OrderItem orderItem : order.getItems()) {
             MenuItem menuItem = menuItemRepository.findById(orderItem.getMenuItem().getId()).orElseThrow(
-                    () -> new NotFoundException("MenuItem not found with id: " + orderItem.getMenuItem().getId())
-            );
+                    () -> new NotFoundException("MenuItem not found with id: " + orderItem.getMenuItem().getId()));
 
-            BigDecimal unitPrice = orderItem.getUnitPrice();
-            BigDecimal line = unitPrice.multiply(new BigDecimal(orderItem.getQuantity()));
+            BigDecimal unitPrice = menuItem.getPrice();
+            BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(orderItem.getQuantity()));
 
+            OrderItem newItem = OrderItem.builder()
+                    .menuItem(menuItem)
+                    .nameSnapshot(menuItem.getName())
+                    .unitPrice(unitPrice)
+                    .quantity(orderItem.getQuantity())
+                    .lineTotal(lineTotal)
+                    .build();
 
+            newOrder.addItem(newItem);
+            itemsTotal = itemsTotal.add(lineTotal);
         }
+
+        newOrder.setItemsTotal(itemsTotal);
+        newOrder.setGrandTotal(itemsTotal.add(newOrder.getDeliveryFee()));
 
         return orderRepository.save(newOrder);
     }
@@ -84,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<Order> listByRestaurantId(UUID restaurantId) {
-        return List.of();
+        return orderRepository.findAllByRestaurant_Id(restaurantId);
     }
 
     private Order getOrderOrElseThrow(UUID id) {

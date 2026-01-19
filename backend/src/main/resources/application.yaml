@@ -26,11 +26,16 @@ api:
     license:
       name: "MIT"
 
+security:
+  jwt:
+    secret: ${SECURITY_JWT_SECRET:secret}
+    expiration-ms: ${SECURITY_JWT_EXPIRATION_MS:3600000}
+
 # === DATABASE ===
 spring.datasource:
   url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/YummyFoodDB?currentSchema=yummyfood}
   username: ${SPRING_DATASOURCE_USERNAME:postgres}
-  password: ${SPRING_DATASOURCE_PASSWORD:ZAQ!2wsx}
+  password: ${SPRING_DATASOURCE_PASSWORD:secret}
 
 # === JPA / HIBERNATE ===
 spring.jpa:
