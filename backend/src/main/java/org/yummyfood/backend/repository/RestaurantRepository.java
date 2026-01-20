@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
     List<Restaurant> findByIsActiveAndNameContainingIgnoreCase(boolean active, String name);
     List<Restaurant> findByIsActive(boolean active);
+    List<Restaurant> findAllByOwner_id(UUID ownerId);
 }

@@ -22,6 +22,10 @@ public class Restaurant extends BaseEntity {
     @UuidGenerator
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
     @Column(nullable = false, length = 150)
     private String name;
 

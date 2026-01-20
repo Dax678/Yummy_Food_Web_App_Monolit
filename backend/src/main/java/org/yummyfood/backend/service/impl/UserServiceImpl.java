@@ -28,6 +28,9 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByUsername(request.username())) {
             throw new InvalidInputException("Username already in use.");
         }
+        if(request.role() != UserRole.USER && request.role() != UserRole.RESTAURANT) {
+            throw new InvalidInputException("Invalid role for registration.");
+        }
 
         User user = User.builder()
                 .username(request.username())
@@ -35,7 +38,7 @@ public class UserServiceImpl implements UserService {
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .fullName(request.fullName())
                 .phone(request.phone())
-                .role(UserRole.USER)
+                .role(request.role())
                 .build();
 
 

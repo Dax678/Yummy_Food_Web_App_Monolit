@@ -15,7 +15,8 @@ public interface RestaurantMapper {
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "avgRating", ignore = true)
+            @Mapping(target = "avgRating", ignore = true),
+            @Mapping(target = "owner", ignore = true)
     })
     Restaurant apiToEntity(RestaurantRequest api);
 

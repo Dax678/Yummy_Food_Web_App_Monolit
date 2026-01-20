@@ -27,6 +27,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public List<Restaurant> listRestaurantsByOwnerId(UUID ownerId) {
+        List<Restaurant> restaurants = restaurantRepository.findAllByOwner_id(ownerId);
+        if(restaurants.isEmpty()) {
+            throw new NotFoundException("Restaurant not found for owner: " + ownerId);
+        }
+
+        return restaurants;
+    }
+
+    @Override
     public Restaurant createRestaurant(Restaurant restaurant) {
         try {
             return restaurantRepository.save(restaurant);

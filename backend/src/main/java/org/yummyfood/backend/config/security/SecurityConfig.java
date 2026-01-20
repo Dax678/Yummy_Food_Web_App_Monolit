@@ -30,13 +30,24 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
-                                "/api/restaurants/**"
+                                "/api/restaurants",
+                                "/api/restaurants/{id}",
+                                "/api/restaurants/{id}/details"
                         ).permitAll()
                         .requestMatchers(
-                                "/api/restaurants",
-                                "/api/restaurants/",
+                                "/api/orders",
+                                "/api/orders/me"
+                        ).hasAnyRole("USER")
+                        .requestMatchers(
+                                "/api/restaurants/me",
                                 "/api/restaurants/{restaurantId}/menu-items"
+                        ).hasAnyRole("RESTAURANT")
+                        .requestMatchers(
+                                "/api/restaurants"
                         ).hasAnyRole("ADMIN")
+                        .requestMatchers(
+                                "/api/restaurants/{id}"
+                        ).hasAnyRole("RESTAURANT", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)

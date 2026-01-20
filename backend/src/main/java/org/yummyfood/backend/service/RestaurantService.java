@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public interface RestaurantService {
     Restaurant getRestaurantById(UUID id);
+    List<Restaurant> listRestaurantsByOwnerId(UUID ownerId);
     Restaurant createRestaurant(Restaurant restaurant);
     Restaurant updateRestaurant(UUID id, Restaurant restaurant);
     List<Restaurant> listActive(boolean active);
