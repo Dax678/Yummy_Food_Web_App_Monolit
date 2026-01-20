@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: yummyfood
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ZAQ!2wsx
+      POSTGRES_PASSWORD: secret
     ports:
       - "5432:5432"
     volumes:
@@ -29,7 +29,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/yummyfood
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: ZAQ!2wsx
+      SPRING_DATASOURCE_PASSWORD: secret
       SPRING_JPA_HIBERNATE_DDL_AUTO: update      # na dev można tak
       SPRING_PROFILES_ACTIVE: docker
     ports:
