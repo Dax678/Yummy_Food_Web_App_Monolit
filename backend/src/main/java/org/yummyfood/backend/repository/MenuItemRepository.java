@@ -5,10 +5,10 @@ import org.springframework.stereotype.Repository;
 import org.yummyfood.backend.domain.MenuItem;
 import org.yummyfood.backend.domain.Restaurant;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
-    List<MenuItem> findByRestaurant(Restaurant restaurant);
+    Set<MenuItem> findByRestaurant(Restaurant restaurant);
 }

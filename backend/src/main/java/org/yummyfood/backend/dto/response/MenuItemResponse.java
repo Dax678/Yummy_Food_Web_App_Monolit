@@ -1,13 +1,13 @@
 package org.yummyfood.backend.dto.response;
 
 import java.math.BigDecimal;
-import java.util.Set;
 import java.util.UUID;
 
-public record RestaurantResponse(
+public record MenuItemResponse(
         UUID id,
         String name,
         String description,
-        BigDecimal avgRating,
-        Set<MenuItemResponse> items
-) { }
+        BigDecimal price,
+        String imageUrl
+) {
+}

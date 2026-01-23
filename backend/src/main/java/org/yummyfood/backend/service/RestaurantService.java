@@ -10,6 +10,5 @@ public interface RestaurantService {
     List<Restaurant> listRestaurantsByOwnerId(UUID ownerId);
     Restaurant createRestaurant(Restaurant restaurant);
     Restaurant updateRestaurant(UUID id, Restaurant restaurant);
-    List<Restaurant> listActive(boolean active);
     List<Restaurant> searchByNameAndActive(String name, boolean active);
 }

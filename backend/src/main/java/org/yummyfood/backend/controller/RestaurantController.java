@@ -25,6 +25,7 @@ import org.yummyfood.backend.service.RestaurantService;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/restaurants")
@@ -68,7 +69,7 @@ public class RestaurantController {
         requireRestaurantOwner(user);
 
         Restaurant restaurant = restaurantService.getRestaurantById(id);
-        if(restaurant.getOwner() == null || !restaurant.getOwner().getId().equals(user.getId())) {
+        if (restaurant.getOwner() == null || !restaurant.getOwner().getId().equals(user.getId())) {
             throw new InvalidInputException("Restaurant does not belong to current user.");
         }
 
@@ -81,60 +82,73 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RestaurantDetailsResponse>> listAllActive(
+    public ResponseEntity<List<RestaurantResponse>> getRestaurants(
             @RequestParam(required = false, defaultValue = "true") boolean isActive,
-            @RequestParam(required = false) String search
+            @RequestParam(required = false, defaultValue = "") String search
     ) {
-        List<Restaurant> restaurantList;
-        if (search == null || search.isBlank()) {
-            restaurantList = restaurantService.listActive(isActive);
-        } else {
-            restaurantList = restaurantService.searchByNameAndActive(search, isActive);
-        }
+        List<Restaurant> restaurantList = restaurantService.searchByNameAndActive(search, isActive);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(restaurantMapper.entityListToApiList(restaurantList));
+                .body(restaurantList.stream()
+                        .map(restaurant ->
+                                new RestaurantResponse(
+                                        restaurant.getId(),
+                                        restaurant.getName(),
+                                        restaurant.getDescription(),
+                                        restaurant.getAvgRating(),
+                                        menuItemService.listByRestaurantId(restaurant.getId()).stream()
+                                                .map(menuItemMapper::toRestaurantMenuItemResponse).collect(Collectors.toSet()))
+                        ).collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable UUID id) {
+    public ResponseEntity<RestaurantDetailsResponse> getRestaurantDetailsById(@PathVariable UUID id) {
         Restaurant restaurant = restaurantService.getRestaurantById(id);
+        var items = menuItemService.listByRestaurantId(restaurant.getId());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new RestaurantResponse(
+                .body(new RestaurantDetailsResponse(
                         restaurant.getId(),
                         restaurant.getName(),
                         restaurant.getDescription(),
                         restaurant.getPhone(),
                         restaurant.getEmail(),
-                        menuItemService.listByRestaurantId(id).stream()
+                        restaurant.getAvgRating(),
+                        restaurant.isActive(),
+                        items.stream()
                                 .map(menuItemMapper::toRestaurantMenuItemResponse)
-                                .toList()
+                                .collect(Collectors.toList())
                 ));
     }
 
-    @GetMapping("/{id}/details")
-    public ResponseEntity<RestaurantDetailsResponse> getRestaurantDetailsById(@PathVariable UUID id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(restaurantMapper.entityToApi(restaurantService.getRestaurantById(id)));
-    }
-
     @GetMapping("/me")
-    public ResponseEntity<List<RestaurantDetailsResponse>> getMyRestaurants() {
+    public ResponseEntity<List<RestaurantResponse>> getMyRestaurants() {
         User user = getCurrentUser();
         List<Restaurant> restaurants = restaurantService.listRestaurantsByOwnerId(user.getId());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(restaurantMapper.entityListToApiList(restaurants));
+                .body(restaurants.stream().map(restaurant -> {
+                                    var items = menuItemService.listByRestaurantId(restaurant.getId());
+                                    return new RestaurantResponse(
+                                            restaurant.getId(),
+                                            restaurant.getName(),
+                                            restaurant.getDescription(),
+                                            restaurant.getAvgRating(),
+                                            items.stream()
+                                                    .map(menuItemMapper::toRestaurantMenuItemResponse)
+                                                    .collect(Collectors.toSet())
+                                    );
+                                }
+                        ).collect(Collectors.toList())
+                );
     }
 
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null || authentication.getName() == null) {
+        if (authentication == null || authentication.getName() == null) {
             throw new NotFoundException("User not authenticated");
         }
         return userRepository.findByEmail(authentication.getName())
@@ -142,7 +156,7 @@ public class RestaurantController {
     }
 
     private void requireRestaurantOwner(User user) {
-        if(user.getRole() != UserRole.RESTAURANT) {
+        if (user.getRole() != UserRole.RESTAURANT) {
             throw new InvalidInputException("User is not restaurant owner.");
         }
     }

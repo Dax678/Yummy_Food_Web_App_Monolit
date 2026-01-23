@@ -73,6 +73,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         newOrder.setItemsTotal(itemsTotal);
+        newOrder.setDeliveryFee(BigDecimal.valueOf(25));
         newOrder.setGrandTotal(itemsTotal.add(newOrder.getDeliveryFee()));
 
         return orderRepository.save(newOrder);

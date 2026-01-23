@@ -8,6 +8,7 @@ import org.yummyfood.backend.domain.Restaurant;
 import org.yummyfood.backend.exception.InvalidInputException;
 import org.yummyfood.backend.exception.NotFoundException;
 import org.yummyfood.backend.repository.RestaurantRepository;
+import org.yummyfood.backend.service.MenuItemService;
 import org.yummyfood.backend.service.RestaurantService;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final MenuItemService menuItemService;
 
     @Override
     @Transactional(readOnly = true)
@@ -27,9 +29,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Restaurant> listRestaurantsByOwnerId(UUID ownerId) {
         List<Restaurant> restaurants = restaurantRepository.findAllByOwner_id(ownerId);
-        if(restaurants.isEmpty()) {
+        if (restaurants.isEmpty()) {
             throw new NotFoundException("Restaurant not found for owner: " + ownerId);
         }
 
@@ -56,12 +59,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         entity.setActive(restaurant.isActive());
 
         return restaurantRepository.save(entity);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Restaurant> listActive(boolean active) {
-        return restaurantRepository.findByIsActive(active);
     }
 
     @Override

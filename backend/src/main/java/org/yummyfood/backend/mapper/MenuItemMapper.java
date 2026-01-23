@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.yummyfood.backend.domain.MenuItem;
 import org.yummyfood.backend.dto.response.MenuItemDetailsResponse;
-import org.yummyfood.backend.dto.response.RestaurantResponse;
+import org.yummyfood.backend.dto.response.MenuItemResponse;
 
 @Mapper(componentModel = "spring")
 public interface MenuItemMapper {
@@ -14,5 +14,5 @@ public interface MenuItemMapper {
     })
     MenuItemDetailsResponse toDetailsResponse(MenuItem menuItem);
 
-    RestaurantResponse.MenuItemResponse toRestaurantMenuItemResponse(MenuItem menuItem);
+    MenuItemResponse toRestaurantMenuItemResponse(MenuItem menuItem);
 }
