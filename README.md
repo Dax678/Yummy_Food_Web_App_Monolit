@@ -30,7 +30,18 @@ A full-stack food ordering application built as a **monolithic architecture**. T
 ```
 .
 ├── backend/              # Spring Boot API
-├── frontend/             # React + Vite
+│   └── src/main/java
+│       ├── config
+│       ├── controller
+│       ├── domain      
+│       ├── dto
+│           ├── request
+│           └── response
+│       ├── exception
+│       ├── mapper
+│       ├── repository
+│       └── service
+│           └── impl
 ├── docker-compose.yml    # Postgres + backend
 ├── Docker/Init/          # Database initialization SQL
 └── k8s/                  # Kubernetes manifests
